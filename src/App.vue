@@ -1,5 +1,6 @@
 <script setup>
-import { ref, reactive, toRefs, watch } from 'vue'
+import UserData from './components/UserData.vue';
+import { ref, reactive, toRefs, watch } from 'vue';
 import { computed } from 'vue';
 
 // Props
@@ -9,23 +10,44 @@ import { computed } from 'vue';
 // Stores
 
 // States
-const firstName = ref('')
-const lastName = ref('')
+const firstName = ref('');
+const lastName = ref('');
 
-const secondFistName = ref('')
-const secondLastName = ref('')
+const secondFistName = ref('');
+const secondLastName = ref('');
 
-const watcherName = ref('')
-const watcherAge = ref(null)
-const newValue = ref('')
-const oldValue = ref(null)
-
+const watcherName = ref('');
+const watcherAge = ref(null);
+const newValueName = ref('');
+const oldValueName = ref(null);
 
 const userName = ref('Bedir');
 
-const user3 = ref('Bedir')
-const user3Age = ref(29)
+const user3 = ref('Bedir');
+const user3Age = ref(29);
 const toggleVisibility = ref(true);
+
+const availableFunds = ref(100);
+const currentExpenses = ref(0);
+const enteredExpense = ref(0);
+
+const job = ref('Front-End');
+const car = ref('Nissan S2000');
+
+const persons = reactive([
+  {
+    id: '1',
+    firstName: 'Bedir',
+    lastName: 'Kurt',
+    age: 28,
+  },
+  {
+    id: '2',
+    firstName: 'Julie',
+    lastName: 'Canys',
+    age: 25,
+  },
+]);
 
 const users = reactive([
   {
@@ -46,7 +68,6 @@ const user = reactive({
   lastName: 'Kurt',
 });
 
-
 const user2 = ref({
   id: '1',
   name: 'Bedir',
@@ -59,9 +80,7 @@ const convertFromReactionToRef = reactive({
   lastName: 'Kurt',
 });
 // toRefs() reactive bir yapıyı ref e dönüştürür.
-const userRef = toRefs(convertFromReactionToRef)
-
-
+const userRef = toRefs(convertFromReactionToRef);
 
 // Computed States
 const changeButtonName = computed(() =>
@@ -69,50 +88,67 @@ const changeButtonName = computed(() =>
 );
 
 const setFullName = computed(function () {
-  return firstName.value + ' ' + lastName.value
-})
+  return firstName.value + ' ' + lastName.value;
+});
 const setSecondFullName = computed(function () {
-  return 'Name : ' + secondFistName.value + ' ' + 'Last Name : ' + secondLastName.value
-})
+  return (
+    'Name : ' +
+    secondFistName.value +
+    ' ' +
+    'Last Name : ' +
+    secondLastName.value
+  );
+});
 
+const remainingFunds = computed(
+  () => availableFunds.value - currentExpenses.value
+);
 
-// Methods 
+// Methods
+
+const addExpense = () => {
+  currentExpenses.value += enteredExpense.value;
+  if (enteredExpense.value <= 0) {
+    availableFunds.value = 100;
+    currentExpenses.value = 0;
+    enteredExpense.value = 0;
+  } else {
+    enteredExpense.value = 0;
+  }
+};
+
 const setUser3Age = () => {
   user3Age.value = 30;
-}
+};
 
 function setVisibility() {
-  toggleVisibility.value = !toggleVisibility.value
+  toggleVisibility.value = !toggleVisibility.value;
 }
 
 function setFirstName(event) {
   firstName.value = event.target.value;
-
 }
 const setLastName = (event) => {
   lastName.value = event.target.value;
-}
+};
 
-
-// Watchers 
-
+// Watchers
 
 // Not *
 // Composition API kullanırken birden fazla bağımlılık kullanabiliyoruz watch kullanırken [ ] ile
 // normalde   watch(watcherName, function (newValue,oldValue){ ...  }) olarak kullanıyorduk arasındaki fark bu
-watch([watcherName, watcherAge], function (newValues, oldValues) {
-  console.log('New Value' + ' ' + newValues[0]);
-  console.log('Old Value' + ' ' + oldValues[0]);
-  console.log('New Value' + ' ' + newValues[1]);
-  console.log('Old Value' + ' ' + oldValues[1]);
-  newValue.value = newValues[0];
-  oldValue.value = oldValues[0];
+watch([watcherName, watcherAge, remainingFunds], (newValues, oldValues) => {
+  newValueName.value = newValues[0];
+  oldValueName.value = oldValues[0];
+  console.log('Old Value : ' + oldValues[0]);
+  console.log('New Value : ' + newValues[0]);
+  if (newValues[2] < 0) {
+    alert('You are broke ! ');
+    availableFunds.value = 100;
+    currentExpenses.value = 0;
+    enteredExpense.value = 0;
+  }
 });
-
-
-
-
-
 
 // -----------
 setTimeout(() => {
@@ -123,34 +159,25 @@ setTimeout(() => {
   userName.value = 'Bed ';
 }, 2000);
 
-
 setTimeout(() => {
   users[0].name = 'Bed ';
 }, 2000);
 
 setTimeout(() => {
   user.name = 'Bed  Reactive';
-}, 2000)
+}, 2000);
 
 setTimeout(() => {
   user2.value.name = 'Bed Ref';
-}, 2000)
+}, 2000);
 
 // Life-cycle Hooks
-
-
-
-
 </script>
 
-
-
 <template>
-
-
   <section class="container">
     <span>1</span>
-    <h1>Ref<br>Composition API</h1>
+    <h1>Ref<br />Composition API</h1>
     <h2>{{ userName }}</h2>
     <ul>
       <li>
@@ -161,7 +188,7 @@ setTimeout(() => {
 
   <section class="container">
     <span>2</span>
-    <h1>Reactive<br>Composition API</h1>
+    <h1>Reactive<br />Composition API</h1>
     <ul>
       <li v-for="user in users" :key="user.id">
         <p><strong>ID : </strong>{{ user.id }}</p>
@@ -169,7 +196,7 @@ setTimeout(() => {
         <p><strong>Age : </strong>{{ user.age }}</p>
       </li>
     </ul>
-    <br>
+    <br />
     <ul>
       <li>
         <p><strong>Name : </strong>{{ user.name }}</p>
@@ -184,7 +211,7 @@ setTimeout(() => {
 
   <section class="container">
     <span>3</span>
-    <h1>Replacing "methods" with Regular Functions<br>Composition API</h1>
+    <h1>Replacing "methods" with Regular Functions<br />Composition API</h1>
     <h2>{{ user3 }}</h2>
     <ul v-if="toggleVisibility">
       <li>
@@ -200,11 +227,15 @@ setTimeout(() => {
 
   <section class="container">
     <span>4</span>
-    <h1>Computed<br>Composition API</h1>
+    <h1>Computed<br />Composition API</h1>
     <h2>{{ setFullName }}</h2>
     <div class="input-group">
-      <input type="text" placeholder="First Name" @input="setFirstName($event)">
-      <input type="text" placeholder="Last Name" @input="setLastName">
+      <input
+        type="text"
+        placeholder="First Name"
+        @input="setFirstName($event)"
+      />
+      <input type="text" placeholder="Last Name" @input="setLastName" />
     </div>
   </section>
 
@@ -213,31 +244,58 @@ setTimeout(() => {
     <h1>Two-Way-Binding and the Composition API</h1>
     <h2>{{ setSecondFullName }}</h2>
     <div class="input-group">
-      <input type="text" placeholder="First Name" v-model="secondFistName">
-      <input type="text" placeholder="Last Name" v-model="secondLastName">
+      <input type="text" placeholder="First Name" v-model="secondFistName" />
+      <input type="text" placeholder="Last Name" v-model="secondLastName" />
     </div>
   </section>
 
   <section class="container">
     <span>6</span>
-    <h1>Working with Watchers<br>Composition API</h1>
-    <p><strong>New Value : </strong>{{ newValue }}</p>
-    <p><strong>Old Value : </strong>{{ oldValue }}</p>
+    <h1>Working with Watchers<br />Composition API</h1>
+    <p><strong>New Value : </strong>{{ newValueName }}</p>
+    <p><strong>Old Value : </strong>{{ oldValueName }}</p>
     <div class="input-group">
-      <input type="text" placeholder="First Name" v-model="watcherName">
-      <input type="text" placeholder="Age" v-model="watcherAge">
+      <input type="text" placeholder="First Name" v-model="watcherName" />
+      <input type="text" placeholder="Age" v-model="watcherAge" />
     </div>
   </section>
 
   <section class="container">
     <span>7</span>
+    <header>
+      <h1>
+        Expense Tracker <br />
+        Composition API
+      </h1>
+    </header>
 
+    <div>Available Funds: {{ availableFunds }}</div>
+    <div>Total Expenses: {{ currentExpenses }}</div>
+    <hr />
+    <div>Funds left: {{ remainingFunds }}</div>
+
+    <section>
+      <form @submit.prevent="addExpense">
+        <label for="amount"><strong>Amount</strong></label>
+        <div>
+          <input id="amount" type="number" v-model="enteredExpense" />
+        </div>
+        <button>Add Expense</button>
+        <button>Reset</button>
+      </form>
+    </section>
   </section>
 
-
-
+  <div>
+    <UserData
+       name="BedVader"
+      :age="29"
+      :job="job"
+      :car="car"
+      :persons="persons"
+    />
+  </div>
 </template>
-
 
 <style>
 * {
@@ -249,12 +307,10 @@ setTimeout(() => {
 html {
   font-family: monospace;
   background-color: rgba(0, 0, 0, 0.068);
-
 }
 
 body {
   margin: 0;
-
 }
 
 .container {
@@ -265,12 +321,16 @@ body {
   padding: 1rem;
   text-align: center;
   background-color: white;
+  transition: transform 0.3s ease;
+}
+
+.container:hover {
+  transform: scale(1.03);
 }
 
 h1 {
   margin-bottom: 10px;
 }
-
 
 ul li {
   list-style: none;
@@ -288,7 +348,7 @@ ul li:hover {
 }
 
 strong {
-  color: rgba(255, 0, 0, 0.486);
+  color: rgba(255, 0, 0, 0.658);
 }
 
 h1 {
@@ -303,8 +363,6 @@ button {
   border-radius: 10px;
   font-weight: bolder;
   transition: transform 0.3s ease;
-
-
 }
 
 button:hover {
@@ -318,13 +376,13 @@ button:hover {
   justify-content: space-between;
 }
 
-
 input {
   transition: transform 0.4s ease;
+  margin-bottom: 0.5rem;
 }
 
 input:hover {
-  transform: scale(1.10);
+  transform: scale(1.1);
 }
 
 .input-group {
@@ -332,8 +390,6 @@ input:hover {
   display: flex;
   justify-content: space-between;
 }
-
-
 
 span {
   width: 20px;
@@ -344,5 +400,10 @@ span {
   padding: 2px;
   color: rgba(0, 0, 0, 0.76);
   margin: 5px 0px;
+}
+
+label {
+  font-weight: bolder;
+  font-size: larger;
 }
 </style>
