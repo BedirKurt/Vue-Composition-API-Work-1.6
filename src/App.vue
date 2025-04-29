@@ -1,39 +1,20 @@
 <script setup>
-import UserData from './components/UserData.vue';
-import { ref, reactive, toRefs, watch } from 'vue';
-import { computed } from 'vue';
+import RefExample from './components/examples/RefExample.vue';
+import ReactiveExample from './components/examples/ReactiveExample.vue';
+import MethodsExample from './components/examples/MethodsExample.vue';
+import ComputedExample from './components/examples/ComputedExample.vue';
+import WatchersExample from './components/examples/WatchersExample.vue';
+import ExpenseTracker from './components/ExpenseTracker.vue';
+import BindingExample from './components/examples/BindingExample.vue';
+import PropsExample from './components/examples/PropsExample.vue';
+import EmitExample from './components/examples/EmitExample.vue';
+import ProvideInjectExample from './components/examples/ProvideInjectExample.vue';
+import LifeCycleHooks from './components/examples/LifeCycleHooks.vue';
 
-// Props
-
-// Hooks, Custom Hooks, Library Instances
-
-// Stores
-
-// States
-const firstName = ref('');
-const lastName = ref('');
-
-const secondFistName = ref('');
-const secondLastName = ref('');
-
-const watcherName = ref('');
-const watcherAge = ref(null);
-const newValueName = ref('');
-const oldValueName = ref(null);
-
-const userName = ref('Bedir');
-
-const user3 = ref('Bedir');
-const user3Age = ref(29);
-const toggleVisibility = ref(true);
-
-const availableFunds = ref(100);
-const currentExpenses = ref(0);
-const enteredExpense = ref(0);
-
+import { ref, reactive, provide } from 'vue';
+const showComponent = ref(true);
 const job = ref('Front-End');
-const car = ref('Nissan S2000');
-
+const carModel = ref('Nissan');
 const persons = reactive([
   {
     id: '1',
@@ -49,252 +30,56 @@ const persons = reactive([
   },
 ]);
 
-const users = reactive([
-  {
-    id: '1',
-    name: 'Bedir',
-    age: 29,
-  },
-  {
-    id: '2',
-    name: 'Anna',
-    age: 25,
-  },
-]);
+// LifeCycleHooks için
+setTimeout(() => {
+  showComponent.value = false;
+}, 4000);
 
-const user = reactive({
-  id: '1',
-  name: 'Bedir',
-  lastName: 'Kurt',
-});
+provide('datatest', { job, persons });
 
-const user2 = ref({
-  id: '1',
-  name: 'Bedir',
-  lastName: 'Kurt',
-});
-
-const convertFromReactionToRef = reactive({
-  id: '1',
-  name: 'Bedir',
-  lastName: 'Kurt',
-});
-// toRefs() reactive bir yapıyı ref e dönüştürür.
-const userRef = toRefs(convertFromReactionToRef);
-
-// Computed States
-const changeButtonName = computed(() =>
-  toggleVisibility.value ? 'Hide' : 'Show'
-);
-
-const setFullName = computed(function () {
-  return firstName.value + ' ' + lastName.value;
-});
-const setSecondFullName = computed(function () {
-  return (
-    'Name : ' +
-    secondFistName.value +
-    ' ' +
-    'Last Name : ' +
-    secondLastName.value
-  );
-});
-
-const remainingFunds = computed(
-  () => availableFunds.value - currentExpenses.value
-);
-
-// Methods
-
-const addExpense = () => {
-  currentExpenses.value += enteredExpense.value;
-  if (enteredExpense.value <= 0) {
-    availableFunds.value = 100;
-    currentExpenses.value = 0;
-    enteredExpense.value = 0;
-  } else {
-    enteredExpense.value = 0;
-  }
-};
-
-const setUser3Age = () => {
-  user3Age.value = 30;
-};
-
-function setVisibility() {
-  toggleVisibility.value = !toggleVisibility.value;
+function setNewJob(newjob) {
+  job.value = newjob;
 }
-
-function setFirstName(event) {
-  firstName.value = event.target.value;
+function resetJobName(newjob) {
+  job.value = newjob;
 }
-const setLastName = (event) => {
-  lastName.value = event.target.value;
+const setNewName = (newName) => {
+  persons[0].firstName = newName;
 };
-
-// Watchers
-
-// Not *
-// Composition API kullanırken birden fazla bağımlılık kullanabiliyoruz watch kullanırken [ ] ile
-// normalde   watch(watcherName, function (newValue,oldValue){ ...  }) olarak kullanıyorduk arasındaki fark bu
-watch([watcherName, watcherAge, remainingFunds], (newValues, oldValues) => {
-  newValueName.value = newValues[0];
-  oldValueName.value = oldValues[0];
-  console.log('Old Value : ' + oldValues[0]);
-  console.log('New Value : ' + newValues[0]);
-  if (newValues[2] < 0) {
-    alert('You are broke ! ');
-    availableFunds.value = 100;
-    currentExpenses.value = 0;
-    enteredExpense.value = 0;
-  }
-});
-
-// -----------
-setTimeout(() => {
-  userRef.name = 'Kurt';
-}, 2000);
-
-setTimeout(() => {
-  userName.value = 'Bed ';
-}, 2000);
-
-setTimeout(() => {
-  users[0].name = 'Bed ';
-}, 2000);
-
-setTimeout(() => {
-  user.name = 'Bed  Reactive';
-}, 2000);
-
-setTimeout(() => {
-  user2.value.name = 'Bed Ref';
-}, 2000);
-
-// Life-cycle Hooks
 </script>
 
 <template>
-  <section class="container">
-    <span>1</span>
-    <h1>Ref<br />Composition API</h1>
-    <h2>{{ userName }}</h2>
-    <ul>
-      <li>
-        <p><strong>Name : </strong>{{ user2.name }}</p>
-      </li>
-    </ul>
-  </section>
+  <RefExample />
+  <ReactiveExample />
+  <MethodsExample />
+  <ComputedExample />
+  <BindingExample />
+  <WatchersExample />
+  <ExpenseTracker />
+  <PropsExample
+    name="BedVader"
+    :age="29"
+    :job="job"
+    :car="carModel"
+    :persons="persons"
+  />
+  <EmitExample
+    :job="job"
+    :persons="persons"
+    @change-job="setNewJob"
+    @reset-job="resetJobName"
+    @update-name="setNewName"
+  />
+  <ProvideInjectExample />
 
   <section class="container">
-    <span>2</span>
-    <h1>Reactive<br />Composition API</h1>
-    <ul>
-      <li v-for="user in users" :key="user.id">
-        <p><strong>ID : </strong>{{ user.id }}</p>
-        <p><strong>Name : </strong>{{ user.name }}</p>
-        <p><strong>Age : </strong>{{ user.age }}</p>
-      </li>
-    </ul>
-    <br />
-    <ul>
-      <li>
-        <p><strong>Name : </strong>{{ user.name }}</p>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <p><strong>Name : </strong>{{ userRef.name }}</p>
-      </li>
-    </ul>
+    <h1>
+      LifeCycleHooks <br />
+      Composition API
+    </h1>
+    <LifeCycleHooks v-if="showComponent" />
+    <button @click="showComponent = !showComponent">On/Off Component</button>
   </section>
-
-  <section class="container">
-    <span>3</span>
-    <h1>Replacing "methods" with Regular Functions<br />Composition API</h1>
-    <h2>{{ user3 }}</h2>
-    <ul v-if="toggleVisibility">
-      <li>
-        <p><strong>Name : </strong>{{ user3 }}</p>
-        <p><strong>Age : </strong>{{ user3Age }}</p>
-      </li>
-    </ul>
-    <div class="button-group">
-      <button @click="setUser3Age()">Update Age</button>
-      <button @click="setVisibility()">{{ changeButtonName }}</button>
-    </div>
-  </section>
-
-  <section class="container">
-    <span>4</span>
-    <h1>Computed<br />Composition API</h1>
-    <h2>{{ setFullName }}</h2>
-    <div class="input-group">
-      <input
-        type="text"
-        placeholder="First Name"
-        @input="setFirstName($event)"
-      />
-      <input type="text" placeholder="Last Name" @input="setLastName" />
-    </div>
-  </section>
-
-  <section class="container">
-    <span>5</span>
-    <h1>Two-Way-Binding and the Composition API</h1>
-    <h2>{{ setSecondFullName }}</h2>
-    <div class="input-group">
-      <input type="text" placeholder="First Name" v-model="secondFistName" />
-      <input type="text" placeholder="Last Name" v-model="secondLastName" />
-    </div>
-  </section>
-
-  <section class="container">
-    <span>6</span>
-    <h1>Working with Watchers<br />Composition API</h1>
-    <p><strong>New Value : </strong>{{ newValueName }}</p>
-    <p><strong>Old Value : </strong>{{ oldValueName }}</p>
-    <div class="input-group">
-      <input type="text" placeholder="First Name" v-model="watcherName" />
-      <input type="text" placeholder="Age" v-model="watcherAge" />
-    </div>
-  </section>
-
-  <section class="container">
-    <span>7</span>
-    <header>
-      <h1>
-        Expense Tracker <br />
-        Composition API
-      </h1>
-    </header>
-
-    <div>Available Funds: {{ availableFunds }}</div>
-    <div>Total Expenses: {{ currentExpenses }}</div>
-    <hr />
-    <div>Funds left: {{ remainingFunds }}</div>
-
-    <section>
-      <form @submit.prevent="addExpense">
-        <label for="amount"><strong>Amount</strong></label>
-        <div>
-          <input id="amount" type="number" v-model="enteredExpense" />
-        </div>
-        <button>Add Expense</button>
-        <button>Reset</button>
-      </form>
-    </section>
-  </section>
-
-  <div>
-    <UserData
-       name="BedVader"
-      :age="29"
-      :job="job"
-      :car="car"
-      :persons="persons"
-    />
-  </div>
 </template>
 
 <style>
