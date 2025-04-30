@@ -11,8 +11,10 @@ import EmitExample from './components/examples/EmitExample.vue';
 import ProvideInjectExample from './components/examples/ProvideInjectExample.vue';
 import LifeCycleHooks from './components/examples/LifeCycleHooks.vue';
 
+import ProductMain from './views/ProductMain.vue';
+
 import { ref, reactive, provide } from 'vue';
-const showComponent = ref(true);
+const isVisibleComponent = ref(true);
 const job = ref('Front-End');
 const carModel = ref('Nissan');
 const persons = reactive([
@@ -32,7 +34,7 @@ const persons = reactive([
 
 // LifeCycleHooks için
 setTimeout(() => {
-  showComponent.value = false;
+  isVisibleComponent.value = false;
 }, 4000);
 
 provide('datatest', { job, persons });
@@ -73,12 +75,22 @@ const setNewName = (newName) => {
   <ProvideInjectExample />
 
   <section class="container">
-    <h1>
+    <h1 class="custom-h1">
       LifeCycleHooks <br />
       Composition API
     </h1>
-    <LifeCycleHooks v-if="showComponent" />
-    <button @click="showComponent = !showComponent">On/Off Component</button>
+    <LifeCycleHooks v-if="isVisibleComponent" />
+    <button class="emit-btn" @click="isVisibleComponent = !isVisibleComponent">
+      On/Off Component
+    </button>
+  </section>
+
+  <section class="container">
+    <h1 class="custom-h1">
+      Route / Router <br />
+      Composition API
+    </h1>
+    <ProductMain />
   </section>
 </template>
 
@@ -116,31 +128,7 @@ body {
 h1 {
   margin-bottom: 10px;
 }
-
-ul li {
-  list-style: none;
-  border: 1px solid grey;
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  transition: transform 0.3s ease;
-}
-
-ul li:hover {
-  transform: scale(1.03);
-}
-
-strong {
-  color: rgba(255, 0, 0, 0.658);
-}
-
-h1 {
-  color: rgba(0, 0, 255, 0.507);
-}
-
-button {
+.emit-btn {
   padding: 2px 5px;
   background-color: rgba(0, 0, 0, 0.582);
   color: rgba(255, 255, 255, 0.432);
@@ -150,45 +138,13 @@ button {
   transition: transform 0.3s ease;
 }
 
-button:hover {
+.emit-btn:hover {
   transform: scale(1.03);
   color: white;
   background-color: rgba(0, 0, 0, 0.801);
 }
 
-.button-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-input {
-  transition: transform 0.4s ease;
-  margin-bottom: 0.5rem;
-}
-
-input:hover {
-  transform: scale(1.1);
-}
-
-.input-group {
-  margin: 0.5rem 0px;
-  display: flex;
-  justify-content: space-between;
-}
-
-span {
-  width: 20px;
-  border: 1px solid rgba(0, 0, 255, 0.507);
-  display: flex;
-  justify-content: center;
-  border-radius: 100%;
-  padding: 2px;
-  color: rgba(0, 0, 0, 0.76);
-  margin: 5px 0px;
-}
-
-label {
-  font-weight: bolder;
-  font-size: larger;
+.custom-h1 {
+  color: rgba(0, 0, 255, 0.507);
 }
 </style>
